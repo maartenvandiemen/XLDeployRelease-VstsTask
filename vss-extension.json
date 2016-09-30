@@ -1,0 +1,33 @@
+{
+    "manifestVersion": 1,
+    "id": "XLDDeploy",
+    "name": "Deploy with XL Deploy",
+    "version": "1.0.0",
+    "publisher": "Maarten van Diemen",
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],    
+    "description": "Release task for deploying an application with XL Deploy",
+    "categories": [
+        "Build and release"
+    ],
+    "files": [
+        {
+            "path": "XLDDeployReleaseTask"
+        }
+    ],
+    "contributions": [
+ {
+      "id": "DE49AD21-B675-49E2-8308-7C4D149FDFE7",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "XLDDeployReleaseTask"
+      }
+    }
+    ]
+}

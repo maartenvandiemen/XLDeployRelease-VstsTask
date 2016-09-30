@@ -1,0 +1,82 @@
+{
+  "id": "81f625f0-7dd4-11e6-8fe8-017d6830d5be",
+  "name": "XLDDeployRelease",
+  "friendlyName": "Deploy with XL Deploy",
+  "description": "Deploy a build that is uploaded to XL Deploy",
+  "author": "Maarten van Diemen",
+  "helpMarkDown": "This release task enables you to create and start a deployment.",
+  "category": "Deploy",
+  "visibility": [
+    "Release"
+  ],
+  "demands": [],
+  "version": {
+    "Major": "1",
+    "Minor": "0",
+    "Patch": "0"
+  },
+  "minimumAgentVersion": "1.95.0",
+  "instanceNameFormat": "XLDDeploy deploy $(applicationLocation)",
+  "groups": [
+   {
+      "displayName": "Advanced options",
+      "isExpanded": false,
+      "name": "advanced"
+        }
+    ],
+  "inputs": [    
+    {
+      "helpMarkDown": "The XL Deploy server generic endpoint.",
+      "label": "XL Deploy Endpoint",
+      "name": "connectedServiceName",
+      "required": true,
+      "type": "connectedService:Generic"
+    },
+    {
+      "helpMarkDown": "The name of the builddefinition that must be deployed",
+      "label": "Builddefinition",
+      "name": "buildDefinition",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "defaultValue": "",
+      "helpMarkDown": "The location of the application that mustbe deployed in XL Deploy",
+      "label" : "Application location",
+      "name" :"applicationLocation",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "defaultValue": "",
+      "helpMarkDown": "Environment name as specified in XL Deploy.",
+      "label": "Target Environment",
+      "name": "targetEnvironment",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "groupName": "advanced",
+      "defaultValue": "false",
+      "helpMarkDown": "Invoke a rollback in the case of deployment failure.",
+      "label": "Rollback on deployment failure",
+      "name": "rollback",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "groupName": "advanced",
+      "defaultValue": "",
+      "helpMarkDown": "If you want to deploy always a specific version. Enter a value.",
+      "label": "Build version",
+      "name": "buildVersion",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "execution": {
+    "PowerShell3": {
+      "target": "task.ps1"
+    }
+  }
+}
