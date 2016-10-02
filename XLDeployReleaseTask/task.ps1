@@ -4,29 +4,31 @@ try
 { 
 	Import-VstsLocStrings "$PSScriptRoot\Task.json" 
 
+	$action = Get-VstsInput -Name action -Require
     $connectedServiceName = Get-VstsInput -Name connectedServiceName -Require
     $endpoint = Get-VstsEndpoint -Name $connectedServiceName -Require
     $buildDefinition = Get-VstsInput -Name buildDefinition -Require
     $applicationLocation = Get-VstsInput -Name applicationLocation -Require
     $targetEnvironment = Get-VstsInput -Name targetEnvironment -Require
     $rollback = Get-VstsInput -Name rollback -AsBool
-    $buildVersion = Get-VstsInput -Name buildVersion
+    $applicationVersion = Get-VstsInput -Name applicationVersion -Require
 
 	Import-Module $PSScriptRoot\xld-deploy.psm1
 	Import-Module $PSScriptRoot\xld-verify.psm1
-
-	if(!$buildVersion)
+    $ErrorActionPreference = "Stop"
+	
+	if($action -eq "Deploy application created from build")
 	{
 		$buildNumber = Get-VstsTaskVariable -Name "RELEASE.ARTIFACTS.$buildDefinition.BUILDNUMBER"
 	}
 	else
 	{
-		$buildNumber = $buildVersion
+		$buildNumber = $applicationVersion
 	}
 
 	if(!$buildNumber)
 	{
-		throw "Version for $buildDefinition couldn't be determined"
+		throw "Version for couldn't be determined"
 	}
 
 	$authScheme = $serviceEndpoint.Auth.scheme

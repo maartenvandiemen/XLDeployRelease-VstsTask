@@ -1,6 +1,6 @@
 {
     "manifestVersion": 1,
-    "id": "XLDDeploy",
+    "id": "XLDeploy",
     "name": "Deploy with XL Deploy",
     "version": "1.0.0",
     "publisher": "Maarten van Diemen",
@@ -15,7 +15,7 @@
     ],
     "files": [
         {
-            "path": "XLDDeployReleaseTask"
+            "path": "XLDeployReleaseTask"
         }
     ],
     "contributions": [
@@ -26,7 +26,7 @@
         "ms.vss-distributed-task.tasks"
       ],
       "properties": {
-        "name": "XLDDeployReleaseTask"
+        "name": "XLDeployReleaseTask"
       }
     }
     ]

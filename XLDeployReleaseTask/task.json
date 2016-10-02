@@ -1,0 +1,97 @@
+{
+  "id": "81f625f0-7dd4-11e6-8fe8-017d6830d5be",
+  "name": "XLDeployRelease",
+  "friendlyName": "Deploy existing package with XL Deploy",
+  "description": "Deploy an existing package that is uploaded to XL Deploy.",
+  "author": "Maarten van Diemen",
+  "helpMarkDown": "This release task enables you to create and start a deployment.",
+  "category": "Deploy",
+  "visibility": [
+    "Release"
+  ],
+  "demands": [],
+  "version": {
+    "Major": "1",
+    "Minor": "0",
+    "Patch": "0"
+  },
+  "minimumAgentVersion": "1.95.0",
+  "instanceNameFormat": "XL Deploy deploy $(applicationLocation)",
+  "groups": [
+   {
+      "displayName": "Advanced options",
+      "isExpanded": false,
+      "name": "advanced"
+        }
+    ],
+  "inputs": [
+       {
+        "name": "action",
+        "type": "pickList",
+        "label": "Action",
+        "defaultValue": "Deploy application created from build",
+        "required": true,
+        "helpMarkDown": "Action to be perfomed by the build task. This is whetever the application that will be deployed is coupled that a build (linked artifact).",
+        "options": {
+            "Deploy application created from build": "Deploy application created from build",
+			      "Deploy application not created from build": "Deploy application not created from build"
+	    }
+    },
+    {
+      "helpMarkDown": "The XL Deploy server generic endpoint.",
+      "label": "XL Deploy Endpoint",
+      "name": "connectedServiceName",
+      "required": true,
+      "type": "connectedService:Generic"
+    },
+    {
+      "helpMarkDown": "The name of the builddefinition that created the application that must be deployed",
+      "label": "Builddefinition",
+      "name": "buildDefinition",
+	  "defaultValue": "",
+      "required": true,
+      "type": "string",
+	  "visibleRule": "action = Deploy application created from build"
+    },
+	{
+      "defaultValue": "",
+      "helpMarkDown": "The version of the application that must be deployed",
+      "label": "Application version",
+      "name": "applicationVersion",
+	  "defaultValue": "",
+      "required": true,
+      "type": "string",
+	  "visibleRule": "action = Deploy application not created from build"
+    },
+    {
+      "defaultValue": "",
+      "helpMarkDown": "The location of the application that must be deployed in XL Deploy, without the 'Applications/' prefix.",
+      "label" : "Application location",
+      "name" :"applicationLocation",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "defaultValue": "",
+      "helpMarkDown": "Environment name as specified in XL Deploy, without the 'Environments/' prefix.",
+      "label": "Target Environment",
+      "name": "targetEnvironment",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "groupName": "advanced",
+      "defaultValue": "false",
+      "helpMarkDown": "Invoke a rollback in case of deployment failure.",
+      "label": "Rollback on deployment failure",
+      "name": "rollback",
+      "required": false,
+      "type": "boolean"
+    }
+  ],
+  "execution": {
+    "PowerShell3": {
+      "target": "task.ps1"
+    }
+  }
+}
