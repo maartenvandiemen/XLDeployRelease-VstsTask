@@ -7,11 +7,11 @@ try
 	$action = Get-VstsInput -Name action -Require
     $connectedServiceName = Get-VstsInput -Name connectedServiceName -Require
     $endpoint = Get-VstsEndpoint -Name $connectedServiceName -Require
-    $buildDefinition = Get-VstsInput -Name buildDefinition -Require
+    $buildDefinition = Get-VstsInput -Name buildDefinition
     $applicationLocation = Get-VstsInput -Name applicationLocation -Require
     $targetEnvironment = Get-VstsInput -Name targetEnvironment -Require
     $rollback = Get-VstsInput -Name rollback -AsBool
-    $applicationVersion = Get-VstsInput -Name applicationVersion -Require
+    $applicationVersion = Get-VstsInput -Name applicationVersion
 
 	Import-Module $PSScriptRoot\xld-deploy.psm1
 	Import-Module $PSScriptRoot\xld-verify.psm1
@@ -31,10 +31,10 @@ try
 		throw "Version for couldn't be determined"
 	}
 
-	$authScheme = $serviceEndpoint.Auth.scheme
+	$authScheme = $endpoint.Auth.scheme
 	if ($authScheme -ne 'UserNamePassword')
 	{
-		throw "The authorization scheme $authScheme is not supported by Xl Deploy server."
+		throw "The authorization scheme $authScheme is not supported by XL Deploy server."
 	}
 
 	# Create PSCredential object
