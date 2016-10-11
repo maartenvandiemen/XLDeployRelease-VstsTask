@@ -3,7 +3,7 @@
     "id": "XLDeploy",
     "name": "Deploy with XL Deploy",
     "version": "1.0.1",
-    "publisher": "Maarten van Diemen",
+    "publisher": "mvdiemen",
     "targets": [
         {
             "id": "Microsoft.VisualStudio.Services"
