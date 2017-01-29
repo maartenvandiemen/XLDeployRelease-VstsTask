@@ -13,7 +13,7 @@
   "version": {
     "Major": "1",
     "Minor": "0",
-    "Patch": "1"
+    "Patch": "2"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "XL Deploy deploy $(applicationLocation)",
@@ -58,7 +58,6 @@
       "helpMarkDown": "The version of the application that must be deployed",
       "label": "Application version",
       "name": "applicationVersion",
-	  "defaultValue": "",
       "required": true,
       "type": "string",
 	  "visibleRule": "action = Deploy application not created from build"

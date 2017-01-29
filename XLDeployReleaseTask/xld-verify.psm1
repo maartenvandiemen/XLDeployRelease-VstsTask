@@ -14,11 +14,14 @@ function Get-ServerState()
         [string][parameter(Mandatory = $true)]$EndpointUrl,
         [System.Management.Automation.PSCredential][parameter(Mandatory = $true)]$Credential
     )
+	BEGIN{ }
+	PROCESS
     {
         $response = Invoke-RestMethod $EndpointUrl/server/state -Credential $Credential
 
         return $response.'server-state'.'current-mode'
     }
+	END{ }
 }
 
 function Test-ExistsInRepository()
