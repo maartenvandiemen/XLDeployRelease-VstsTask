@@ -28,7 +28,15 @@ try
 
 	if(!$buildNumber)
 	{
-		throw "Version for couldn't be determined"
+
+	    if($action -eq "Deploy application created from build")
+	    {
+		    throw "Version for $($buildDefinition) couldn't be determined."
+	    }
+	    else
+	    {
+		    throw "Application version seems to be empty."
+	    }
 	}
 
 	$authScheme = $endpoint.Auth.scheme
