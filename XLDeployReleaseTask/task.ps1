@@ -7,7 +7,6 @@ try
 	$action = Get-VstsInput -Name action -Require
     $connectedServiceName = Get-VstsInput -Name connectedServiceName -Require
     $endpoint = Get-VstsEndpoint -Name $connectedServiceName -Require
-    $buildDefinition = Get-VstsInput -Name buildDefinition
     $applicationLocation = Get-VstsInput -Name applicationLocation -Require
     $targetEnvironment = Get-VstsInput -Name targetEnvironment -Require
     $rollback = Get-VstsInput -Name rollback -AsBool
@@ -19,7 +18,7 @@ try
 	
 	if($action -eq "Deploy application created from build")
 	{
-		$buildNumber = Get-VstsTaskVariable -Name "RELEASE.ARTIFACTS.$buildDefinition.BUILDNUMBER"
+		$buildNumber = Get-VstsTaskVariable -Name "Build.BuildNumber"
 	}
 	else
 	{
@@ -108,7 +107,7 @@ try
 	{
 		# archive
 		Complete-Task $deploymentTaskId
-		Write-Output "Successfully deployed to $EnvironmentName."
+		Write-Output "Successfully deployed to $targetEnvironment."
 	}
 	else
 	{
