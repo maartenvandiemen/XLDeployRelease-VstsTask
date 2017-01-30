@@ -3,3 +3,25 @@
 ################################################################################
 
 /XLDeployReleaseTask/ps_modules/VstsTaskSdk/VstsTaskSdk.psm1
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/VstsTaskSdk.psd1
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/TraceFunctions.ps1
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/ToolFunctions.ps1
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/Strings/resources.resjson/zh-TW/resources.resjson
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/Strings/resources.resjson/zh-CN/resources.resjson
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/Strings/resources.resjson/ru-RU/resources.resjson
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/Strings/resources.resjson/ko-KR/resources.resjson
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/Strings/resources.resjson/ja-jp/resources.resjson
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/Strings/resources.resjson/it-IT/resources.resjson
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/Strings/resources.resjson/fr-fr/resources.resjson
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/Strings/resources.resjson/es-es/resources.resjson
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/Strings/resources.resjson/en-US/resources.resjson
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/Strings/resources.resjson/de-de/resources.resjson
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/ServerOMFunctions.ps1
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/OutFunctions.ps1
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/LongPathFunctions.ps1
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/LoggingCommandFunctions.ps1
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/LocalizationFunctions.ps1
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/lib.json
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/LegacyFindFunctions.ps1
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/InputFunctions.ps1
+/XLDeployReleaseTask/ps_modules/VstsTaskSdk/FindFunctions.ps1
