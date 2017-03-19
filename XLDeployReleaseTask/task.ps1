@@ -99,7 +99,7 @@ try
 	{
 		Write-Output "Deployment failed. Number of times retried: $retryCounter"
 		Start-Task $deploymentTaskId
-		$taskOutcome = Wait-DeploymentTask -XLDeployServer $server -TaskId $taskId
+		$taskOutcome = Get-TaskOutcome $deploymentTaskId
 		$retryCounter++
 	}
 	
