@@ -13,7 +13,7 @@
   "version": {
     "Major": "1",
     "Minor": "0",
-    "Patch": "4"
+    "Patch": "5"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "XL Deploy deploy $(applicationLocation)",
@@ -43,15 +43,6 @@
       "name": "connectedServiceName",
       "required": true,
       "type": "connectedService:Generic"
-    },
-    {
-      "helpMarkDown": "The name of the builddefinition that created the application that must be deployed",
-      "label": "Builddefinition",
-      "name": "buildDefinition",
-	  "defaultValue": "",
-      "required": true,
-      "type": "string",
-	  "visibleRule": "action = Deploy application created from build"
     },
 	{
       "defaultValue": "",
