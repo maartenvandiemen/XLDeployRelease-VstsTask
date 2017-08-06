@@ -19,9 +19,9 @@ To create an endpoint for XL Deploy:
 
     ![Project control panel Services tab](images/tfs_plugin_admin_services.png)
 
-1. Click **New Service Endpoint** and choose **Generic**.
+1. Click **New Service Endpoint** and choose **XLDeploy Endpoint**.
 
-    ![Add a new generic connection](images/tfs_plugin_new_endpoint.png)
+    ![Add a new XLDeploy Endpoint connection](images/tfs_plugin_new_endpoint.png)
 
 1. In the **Connection Name** box, enter a meaningful connection name such as *XL Deploy Server*.
 1. In the **Server URL** box, enter a URL such as *http://my.xldeploy.server:4516/*. Ensure that the URL includes the correct port number.
@@ -59,7 +59,7 @@ Enter the name of the builddefinition that created the XL Deploy package during 
 
 ### Application version
 *This parameter is only available when the action is: Deploy application not created from build*.
-Enter the version number of the application the must be deployed.
+Enter or choose the version number of the application the must be deployed.
 
 ### Application location
 
@@ -67,7 +67,7 @@ Enter the location of the application from the repository in XL Deploy, without 
 
 ### Target environment
 
-Enter the target environment where the application needs to be deployed, with the *Environments* root. For example: *Development/DevelopmentMachine01*
+Enter or choose the target environment where the application needs to be deployed, with the *Environments* root. For example: *Environments/Development/DevelopmentMachine01*
 
 ## Advanced options
 

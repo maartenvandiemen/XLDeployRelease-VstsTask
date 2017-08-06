@@ -11,9 +11,9 @@
   ],
   "demands": [],
   "version": {
-    "Major": "1",
-    "Minor": "0",
-    "Patch": "5"
+    "Major": "2",
+    "Minor": "1",
+    "Patch": "1"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "XL Deploy deploy $(applicationLocation)",
@@ -25,50 +25,66 @@
         }
     ],
   "inputs": [
-       {
-        "name": "action",
-        "type": "pickList",
-        "label": "Action",
-        "defaultValue": "Deploy application created from build",
-        "required": true,
-        "helpMarkDown": "Action to be perfomed by the build task. This is whetever the application that will be deployed is coupled that a build (linked artifact).",
-        "options": {
-            "Deploy application created from build": "Deploy application created from build",
-			      "Deploy application not created from build": "Deploy application not created from build"
-	    }
+    {
+      "name": "action",
+      "type": "pickList",
+      "label": "Action",
+      "defaultValue": "Deploy application created from build",
+      "required": true,
+      "helpMarkDown": "Action to be perfomed by the build task. This is whetever the application that will be deployed is coupled that a build (linked artifact).",
+      "options": {
+        "Deploy application created from build": "Deploy application created from build",
+        "Deploy application not created from build": "Deploy application not created from build"
+      }
     },
     {
-      "helpMarkDown": "The XL Deploy server generic endpoint.",
+      "helpMarkDown": "The XL Deploy server endpoint.",
       "label": "XL Deploy Endpoint",
       "name": "connectedServiceName",
       "required": true,
-      "type": "connectedService:Generic"
+      "type": "connectedService:xldserver"
     },
-	{
+    {
+      "helpMarkDown": "The name of the builddefinition (artifact) that created the application that must be deployed. Not supported in TFS 2015, falls back to primary buildDefinition!",
+      "label": "Builddefinition",
+      "name": "buildDefinition",
+      "defaultValue": "",
+      "required": true,
+      "type": "pickList",
+      "visibleRule": "action = Deploy application created from build",
+      "properties": {
+        "DisableManageLink": "True",
+        "EditableOptions": "True"
+          } 
+    },
+    {
       "defaultValue": "",
       "helpMarkDown": "The version of the application that must be deployed",
       "label": "Application version",
       "name": "applicationVersion",
       "required": true,
       "type": "string",
-	  "visibleRule": "action = Deploy application not created from build"
+      "visibleRule": "action = Deploy application not created from build"
     },
     {
       "defaultValue": "",
-      "helpMarkDown": "The location of the application that must be deployed in XL Deploy, without the 'Applications/' prefix.",
-      "label" : "Application location",
-      "name" :"applicationLocation",
+      "helpMarkDown": "The location of the application that must be deployed in XL Deploy.",
+      "label": "Application location",
+      "name": "applicationLocation",
       "required": true,
       "type": "string"
     },
     {
       "defaultValue": "",
-      "helpMarkDown": "Environment name as specified in XL Deploy, without the 'Environments/' prefix.",
+      "helpMarkDown": "Environment name as specified in XL Deploy.",
       "label": "Target Environment",
       "name": "targetEnvironment",
+      "properties": {
+          "EditableOptions": "True"
+      },
       "required": true,
-      "type": "string"
-    },
+      "type": "pickList"
+  },
     {
       "groupName": "advanced",
       "defaultValue": "false",
@@ -77,6 +93,21 @@
       "name": "rollback",
       "required": false,
       "type": "boolean"
+    }
+  ],
+  "sourceDefinitions": [
+    {
+      "target": "buildDefinition",
+      "endpoint": "/$(system.teamProject)/_apis/release/definitions/$(Release.DefinitionId)?api-version=1.0",
+      "selector": "jsonpath:$.artifacts[*].alias",
+      "authKey": "tfs:teamfoundation"
+    }
+  ],
+  "dataSourceBindings": [
+    {
+      "dataSourceName": "Repositories",
+      "endpointId": "$(connectedServiceName)",
+      "target": "targetEnvironment"
     }
   ],
   "execution": {
