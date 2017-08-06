@@ -7,18 +7,28 @@ try
 	$action = Get-VstsInput -Name action -Require
     $connectedServiceName = Get-VstsInput -Name connectedServiceName -Require
     $endpoint = Get-VstsEndpoint -Name $connectedServiceName -Require
+    $buildDefinition = Get-VstsInput -Name buildDefinition
     $applicationLocation = Get-VstsInput -Name applicationLocation -Require
     $targetEnvironment = Get-VstsInput -Name targetEnvironment -Require
     $rollback = Get-VstsInput -Name rollback -AsBool
     $applicationVersion = Get-VstsInput -Name applicationVersion
 
-	Import-Module $PSScriptRoot\xld-deploy.psm1
-	Import-Module $PSScriptRoot\xld-verify.psm1
+	Import-Module $PSScriptRoot\ps_modules\XLD_module\xld-deploy.psm1
+	Import-Module $PSScriptRoot\ps_modules\XLD_module\xld-verify.psm1
     $ErrorActionPreference = "Stop"
 	
 	if($action -eq "Deploy application created from build")
 	{
-		$buildNumber = Get-VstsTaskVariable -Name "Build.BuildNumber"
+        #Check if TFS 2017 is installed
+        if((Get-VstsTaskVariable -Name "Release.AttemptNumber"))
+        {
+		    $buildNumber = Get-VstsTaskVariable -Name "RELEASE.ARTIFACTS.$buildDefinition.BUILDNUMBER"
+        }
+        else
+        {
+            Write-Warning "The field BuildDefinition is ignored, not supported on TFS 2015"
+            $buildNumber = Get-VstsTaskVariable -Name "Build.BuildNumber"
+        }
 	}
 	else
 	{
@@ -63,36 +73,34 @@ try
 	Write-Output "XL Deploy server is running."
 
 
-	if (-not $targetEnvironment.StartsWith("Environments/", "InvariantCultureIgnoreCase"))
-	{
-		$targetEnvironment = "Environments/$targetEnvironment"
-	}
-
-	if (-not (Test-ExistsInRepository $targetEnvironment)) 
+	if (-not (Test-EnvironmentExists $targetEnvironment)) 
 	{
 		throw "Specified environment $targetEnvironment doesn't exists."
 	}
 
-	if(-not $applicationLocation.StartsWith("Applications/", "InvariantCultureIgnoreCase"))
+    $deploymentPackageId = [System.IO.Path]::Combine($applicationLocation, $buildNumber).Replace("\", "/")
+
+	if(-not $deploymentPackageId.StartsWith("Applications/", "InvariantCultureIgnoreCase"))
 	{
-		$applicationLocation = "Applications/$applicationLocation"
+		$deploymentPackageId = "Applications/$deploymentPackageId"
 	}
 
-	if(-not (Test-ExistsInRepository $applicationLocation))
+	if(-not (Test-Package $deploymentPackageId))
 	{
-		throw "Specified application $applicationLocation doesn't exists."
+		throw "Specified application $deploymentPackageId doesn't exists."
 	}
 
 	# create new deployment task
-	$deploymentPackageId = [System.IO.Path]::Combine($applicationLocation, $buildNumber).Replace("\", "/")
+	
 	$deploymentTaskId = New-DeploymentTask $deploymentPackageId $targetEnvironment
-
+    Write-Output "Start deployment $($deploymentPackageId) to $($targetEnvironment)."
 	Start-Task $deploymentTaskId
 
 	$taskOutcome = Get-TaskOutcome $deploymentTaskId
 
 	#Implemented retry mechanism because sometimes the deployment is failing in combination with the IIS deployment plugin of XL Deploy
 	#Maximum number of retries: 3
+    <# retry mechanism does not seem to work. commented out until feature is needed.
 	$retryCounter = 1
 	while(($taskOutcome -eq "FAILED" -or $taskOutcome -eq "STOPPED" -or $taskOutcome -eq "CANCELLED") -and $retryCounter -lt 5)
 	{
@@ -101,7 +109,7 @@ try
 		$taskOutcome = Get-TaskOutcome $deploymentTaskId
 		$retryCounter++
 	}
-	
+	#>
 
 	if ($taskOutcome -eq "EXECUTED" -or $taskOutcome -eq "DONE")
 	{
@@ -111,14 +119,13 @@ try
 	}
 	else
 	{
-		if (!$shouldRollback) 
+		Write-Warning (Get-FailedTaskMessage -taskId $deploymentTaskId | Out-String)
+		
+		if (!$rollback) 
 		{
 			throw "Deployment failed."
 		}
 
-		Write-Warning "Deployment failed."
-		Write-Output ("##vso[task.complete result=SucceededWithIssues;]Deployment failed.")
-        
 		Write-Output "Starting rollback."
 
 		# rollback
@@ -136,8 +143,11 @@ try
 		}
 		else
 		{
+			Write-Warning (Get-FailedTaskMessage -taskId $rollbackTaskId | Out-String)
 			throw "Rollback failed." 
 		}
+
+        Write-Output ("##vso[task.complete result=SucceededWithIssues;]Deployment failed.")
 	}
 }
 finally
