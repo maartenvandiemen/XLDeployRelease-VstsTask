@@ -1,15 +1,25 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/q2kbyb3n1fomrj5n?svg=true)](https://ci.appveyor.com/project/mvdiemen/xldeployrelease-vststask)
+
+This package has a dependency on the [official plugin](https://marketplace.visualstudio.com/items?itemName=xebialabs.tfs2015-xl-deploy-plugin). This extension is dependent on the endpoint defined in the [official plugin](https://marketplace.visualstudio.com/items?itemName=xebialabs.tfs2015-xl-deploy-plugin).
+
+# About XL-Deploy
 [XL Deploy](https://xebialabs.com/products/xl-deploy/) provides enterprise-scale application release automation for any environment. It lets you automate and standardize complex deployments, speeding up deployment time while greatly reducing errors and failed deployments.
 
 XL Deploy gives you visibility into the deployment status of your applications and environments, and even enables you to support self-service deployment while maintaining governance and control.
 
 With this extension, you will be able to deploy existing artificats from XL Deploy.
 
+## Why is this plugin created?
+This plugin is created because of the following limitations of the current official plugin:
+1. The current offical plugin doesn't provide the option to deploy an application that is already uploaded to XL Deploy from a build definition (assuming that the version in XL-Deploy can be matched with the versionnumber). 
+1. The current official plugin doesn't provide the option to deploy applications that are not created from a builddefinition.
+
+
 ### Setup
-The [VSTS Task library](https://github.com/Microsoft/vsts-task-lib) needs to be included before this extension can be packaged/used. How to install the VSTS Task library is described [here](https://github.com/Microsoft/vsts-task-lib/blob/master/powershell/Docs/Consuming.md).
+The [VSTS Task library](https://github.com/Microsoft/vsts-task-lib) needs to be included before this extension can be packaged/used locally. How to install the VSTS Task library is described [here](https://github.com/Microsoft/vsts-task-lib/blob/master/powershell/Docs/Consuming.md).
 
 ## Usage
-
-This extension installs a build task that will help you to package and deploy your application through a VSTS/TFS build pipeline and XL Deploy.
+This extension installs a release task that will help you to deploy your application through a VSTS/TFS release pipeline and XL Deploy.
 
 ## Create an endpoint for XL Deploy
 
