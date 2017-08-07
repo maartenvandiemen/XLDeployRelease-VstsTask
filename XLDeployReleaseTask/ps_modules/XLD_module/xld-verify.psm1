@@ -1,30 +1,4 @@
 <############################################################################################ 
-    Given the username and password strings, create a valid PSCredential object.
-############################################################################################>
-function New-PSCredential()
-{
-	[CmdletBinding()]
-	param
-	(
-		[string][parameter(Mandatory = $true)]$Username,
-		[string][parameter(Mandatory = $true)]$Password
-	)
-	BEGIN
-	{
-		#Write-Verbose "Username = $Username"
-        #Write-Verbose "Password = $Password"
-	}
-	PROCESS
-	{
-		$securePassword = ConvertTo-SecureString -String $Password -asPlainText -Force
-		$credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $Username, $securePassword
-
-		return $credential
-	}
-	END { }
-}
-
-<############################################################################################ 
     Return information about current server state (is it RUNNING or in MAINTENANCE mode).
 ############################################################################################>
 function Get-ServerState()
