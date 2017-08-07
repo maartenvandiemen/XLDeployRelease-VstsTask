@@ -1,6 +1,6 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/q2kbyb3n1fomrj5n?svg=true)](https://ci.appveyor.com/project/mvdiemen/xldeployrelease-vststask)
 
-This package has a dependency on the [official plugin](https://marketplace.visualstudio.com/items?itemName=xebialabs.tfs2015-xl-deploy-plugin). This extension is dependent on the endpoint defined in the [official plugin](https://marketplace.visualstudio.com/items?itemName=xebialabs.tfs2015-xl-deploy-plugin).
+*This extension is dependent on the endpoint defined in the [official plugin](https://marketplace.visualstudio.com/items?itemName=xebialabs.tfs2015-xl-deploy-plugin). Before using this plugin, ensure that the [official plugin](https://marketplace.visualstudio.com/items?itemName=xebialabs.tfs2015-xl-deploy-plugin) is installed for the same account/project collection.*
 
 # About XL-Deploy
 [XL Deploy](https://xebialabs.com/products/xl-deploy/) provides enterprise-scale application release automation for any environment. It lets you automate and standardize complex deployments, speeding up deployment time while greatly reducing errors and failed deployments.
