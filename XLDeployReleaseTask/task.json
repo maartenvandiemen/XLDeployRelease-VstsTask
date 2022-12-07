@@ -12,8 +12,8 @@
   "demands": [],
   "version": {
     "Major": "2",
-    "Minor": "1",
-    "Patch": "2"
+    "Minor": "0",
+    "Patch": "36"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "XL Deploy deploy $(applicationLocation)",
@@ -79,11 +79,8 @@
       "helpMarkDown": "Environment name as specified in XL Deploy.",
       "label": "Target Environment",
       "name": "targetEnvironment",
-      "properties": {
-          "EditableOptions": "True"
-      },
       "required": true,
-      "type": "pickList"
+      "type": "string"
   },
     {
       "groupName": "advanced",
@@ -93,6 +90,24 @@
       "name": "rollback",
       "required": false,
       "type": "boolean"
+    },
+    {
+      "groupName": "advanced",
+      "defaultValue": "false",
+      "helpMarkDown": "Overide placeholder before deployement with provided list of deployedtypes, deployednames, placeholders and values. This will not change any dictionary.",
+      "label": "Overide placeholder before deployement",
+      "name": "placeholderOverride",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "groupName": "advanced",
+      "defaultValue": "",
+      "helpMarkDown": "List of deployedtypes, deployednames, placeholders and values to set before deployment. Every line is a seperate placeholder. Please provide deployedtype, deployedname, placeholder and value comma separated, like: WSB.DeployedFarm,Wsbdeployedname,generiek.omgeving.user,testuser",
+      "label": "Override list",
+      "name": "placeholderList",
+      "required": false,
+      "type": "multiLine"
     }
   ],
   "sourceDefinitions": [
@@ -101,13 +116,6 @@
       "endpoint": "/$(system.teamProject)/_apis/release/definitions/$(Release.DefinitionId)?api-version=1.0",
       "selector": "jsonpath:$.artifacts[*].alias",
       "authKey": "tfs:teamfoundation"
-    }
-  ],
-  "dataSourceBindings": [
-    {
-      "dataSourceName": "Repositories",
-      "endpointId": "$(connectedServiceName)",
-      "target": "targetEnvironment"
     }
   ],
   "execution": {
