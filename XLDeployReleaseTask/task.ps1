@@ -1,4 +1,3 @@
-[CmdletBinding()]
 param() 
 Trace-VstsEnteringInvocation $MyInvocation
 try 
@@ -7,15 +6,21 @@ try
 
 	$action = Get-VstsInput -Name action -Require
     $connectedServiceName = Get-VstsInput -Name connectedServiceName -Require
+    $endpoint = Get-VstsEndpoint -Name $connectedServiceName -Require
     $buildDefinition = Get-VstsInput -Name buildDefinition
     $applicationLocation = Get-VstsInput -Name applicationLocation -Require
     $targetEnvironment = Get-VstsInput -Name targetEnvironment -Require
     $rollback = Get-VstsInput -Name rollback -AsBool
-    $applicationVersion = Get-VstsInput -Name applicationVersion
-
+	$applicationVersion = Get-VstsInput -Name applicationVersion
+	
 	Import-Module $PSScriptRoot\ps_modules\XLD_module\xld-deploy.psm1
 	Import-Module $PSScriptRoot\ps_modules\XLD_module\xld-verify.psm1
-    $ErrorActionPreference = "Stop"
+	Import-Module $PSScriptRoot\ps_modules\utilities_module\utilities.psm1
+
+	$ErrorActionPreference = "Stop"
+	
+	[bool]$placeholderOverride = Get-VstsInput -Name placeholderOverride -AsBool
+	[string[]]$placeholderList = Convert-ToArrayList (Get-VstsInput -Name placeholderList)
 	
 	if($action -eq "Deploy application created from build")
 	{
@@ -48,21 +53,29 @@ try
 	    }
 	}
 
-	$serviceEndpoint = Get-EndpointData $connectedServiceName
+	$authScheme = $endpoint.Auth.scheme
+	if ($authScheme -ne 'UserNamePassword')
+	{
+		throw "The authorization scheme $authScheme is not supported by XL Deploy server."
+	}
+
+	# Create PSCredential object
+	$credential = New-PSCredential $endpoint.Auth.parameters.username $endpoint.Auth.parameters.password
+	$serverUrl = Test-EndpointBaseUrl $endpoint.Url
 
 	# Add URL and credentials to default parameters so that we don't need
 	# to specify them over and over for this session.
-	$PSDefaultParameterValues.Add("*:EndpointUrl", $serviceEndpoint.Url)
-	$PSDefaultParameterValues.Add("*:Credential", $serviceEndpoint.Credential)
+	$PSDefaultParameterValues.Add("*:EndpointUrl", $serverUrl)
+	$PSDefaultParameterValues.Add("*:Credential", $credential)
 
 
 	# Check server state and validate the address
 	Write-Output "Checking XL Deploy server state..."
 	if ((Get-ServerState) -ne "RUNNING")
 	{
-		throw "XL Deploy server not reachable. Address or credentials are invalid or server is not in a running state."
+		throw "XL Deploy server not in running state."
 	}
-	Write-Output "XL Deploy server is running and credentials are validated."
+	Write-Output "XL Deploy server is running."
 
 
 	if (-not (Test-EnvironmentExists $targetEnvironment)) 
@@ -83,11 +96,25 @@ try
 	}
 
 	# create new deployment task
-	Write-Output "Start deployment $($deploymentPackageId) to $($targetEnvironment)."
-	$deploymentTaskId = New-DeploymentTask $deploymentPackageId $targetEnvironment
+	if ( $placeholderOverride -eq $true ) { $deploymentTaskId = New-DeploymentTask $deploymentPackageId $targetEnvironment $placeholderOverride $placeholderList }
+	else { $deploymentTaskId = New-DeploymentTask $deploymentPackageId $targetEnvironment }
+    Write-Output "Start deployment $($deploymentPackageId) to $($targetEnvironment)."
 	Start-Task $deploymentTaskId
 
 	$taskOutcome = Get-TaskOutcome $deploymentTaskId
+
+	#Implemented retry mechanism because sometimes the deployment is failing in combination with the IIS deployment plugin of XL Deploy
+	#Maximum number of retries: 3
+    <# retry mechanism does not seem to work. commented out until feature is needed.
+	$retryCounter = 1
+	while(($taskOutcome -eq "FAILED" -or $taskOutcome -eq "STOPPED" -or $taskOutcome -eq "CANCELLED") -and $retryCounter -lt 5)
+	{
+		Write-Output "Deployment failed. Number of times retried: $retryCounter"
+		Start-Task $deploymentTaskId
+		$taskOutcome = Get-TaskOutcome $deploymentTaskId
+		$retryCounter++
+	}
+	#>
 
 	if ($taskOutcome -eq "EXECUTED" -or $taskOutcome -eq "DONE")
 	{
@@ -97,23 +124,8 @@ try
 	}
 	else
 	{
-		if ($taskOutcome -eq "FAILED")
-		{
-			$errorMessaage = Get-FailedTaskMessage $deploymentTaskId
-
-			ForEach ($line in $($errorMessaage -split "`r`n"))
-			{
-				if ($line)
-				{
-					Write-Warning $line
-				}
-				else
- 				{
-					Write-Output " "
-				}
-			}
-		}
-
+		Write-Warning (Get-FailedTaskMessage -taskId $deploymentTaskId | Out-String)
+		
 		if (!$rollback) 
 		{
 			throw "Deployment failed."
@@ -132,12 +144,13 @@ try
 		{
 			# archive
 			Complete-Task $rollbackTaskId
-			Write-SetResult "SucceededWithIssues" "Deployment failed - Rollback executed successfully."
+			throw "Deployment failed, Rollback succesfully executed"
 		}
 		else
 		{
-			throw "Rollback failed." 
-		}       
+			Write-Warning (Get-FailedTaskMessage -taskId $rollbackTaskId | Out-String)
+			throw "Deployment failed and Rollback failed." 
+		}
 	}
 }
 finally
