@@ -5,12 +5,12 @@ try
 	Import-VstsLocStrings "$PSScriptRoot\Task.json" 
 
 	$action = Get-VstsInput -Name action -Require
-    $connectedServiceName = Get-VstsInput -Name connectedServiceName -Require
-    $endpoint = Get-VstsEndpoint -Name $connectedServiceName -Require
-    $buildDefinition = Get-VstsInput -Name buildDefinition
-    $applicationLocation = Get-VstsInput -Name applicationLocation -Require
-    $targetEnvironment = Get-VstsInput -Name targetEnvironment -Require
-    $rollback = Get-VstsInput -Name rollback -AsBool
+    	$connectedServiceName = Get-VstsInput -Name connectedServiceName -Require
+    	$endpoint = Get-VstsEndpoint -Name $connectedServiceName -Require
+    	$buildDefinition = Get-VstsInput -Name buildDefinition
+    	$applicationLocation = Get-VstsInput -Name applicationLocation -Require
+    	$targetEnvironment = Get-VstsInput -Name targetEnvironment -Require
+    	$rollback = Get-VstsInput -Name rollback -AsBool
 	$applicationVersion = Get-VstsInput -Name applicationVersion
 	
 	Import-Module $PSScriptRoot\ps_modules\XLD_module\xld-deploy.psm1
@@ -98,23 +98,10 @@ try
 	# create new deployment task
 	if ( $placeholderOverride -eq $true ) { $deploymentTaskId = New-DeploymentTask $deploymentPackageId $targetEnvironment $placeholderOverride $placeholderList }
 	else { $deploymentTaskId = New-DeploymentTask $deploymentPackageId $targetEnvironment }
-    Write-Output "Start deployment $($deploymentPackageId) to $($targetEnvironment)."
+    	Write-Output "Start deployment $($deploymentPackageId) to $($targetEnvironment)."
 	Start-Task $deploymentTaskId
 
 	$taskOutcome = Get-TaskOutcome $deploymentTaskId
-
-	#Implemented retry mechanism because sometimes the deployment is failing in combination with the IIS deployment plugin of XL Deploy
-	#Maximum number of retries: 3
-    <# retry mechanism does not seem to work. commented out until feature is needed.
-	$retryCounter = 1
-	while(($taskOutcome -eq "FAILED" -or $taskOutcome -eq "STOPPED" -or $taskOutcome -eq "CANCELLED") -and $retryCounter -lt 5)
-	{
-		Write-Output "Deployment failed. Number of times retried: $retryCounter"
-		Start-Task $deploymentTaskId
-		$taskOutcome = Get-TaskOutcome $deploymentTaskId
-		$retryCounter++
-	}
-	#>
 
 	if ($taskOutcome -eq "EXECUTED" -or $taskOutcome -eq "DONE")
 	{
